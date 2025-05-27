@@ -1,26 +1,173 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Happy Birthday!</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday</title>
   <style>
     body {
-      background-color: #fbeec1;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+      color: #fff;
+      font-family: 'Cursive', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
       text-align: center;
-      font-family: Arial, sans-serif;
-      padding-top: 100px;
     }
-    h1 {
-      color: #ff6f61;
-      font-size: 3em;
+
+    .container {
+      position: relative;
+      z-index: 1;
     }
-    p {
-      font-size: 1.5em;
-      color: #333;
+
+    .message {
+      font-size: 4em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .countdown {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .sparkles, .firecrackers, .balloons, .stars, .emojis {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .sparkle, .firecracker, .balloon, .star, .emoji {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      opacity: 0;
+      animation: explode 2s ease-out infinite;
+    }
+
+    .sparkle {
+      background: #fff;
+    }
+
+    .firecracker {
+      background: red;
+    }
+
+    .balloon {
+      background: blue;
+      width: 20px;
+      height: 30px;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    }
+
+    .star {
+      background: yellow;
+      width: 15px;
+      height: 15px;
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+
+    .emoji {
+      font-size: 2em;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes explode {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--x), var(--y)) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Happy Birthday, My Love!</h1>
-  <p>You mean the world to me. Here's a special page just for you.</p>
+  <div class="container">
+    <div class="message">🎉 Happy Birthday! 🎂</div>
+    <div class="countdown" id="countdown"></div>
+    <div class="sparkles"></div>
+    <div class="firecrackers"></div>
+    <div class="balloons"></div>
+    <div class="stars"></div>
+    <div class="emojis"></div>
+  </div>
+
+  <script>
+    function createParticles(containerClass, particleClass, count) {
+      const container = document.querySelector(containerClass);
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add(particleClass);
+        const x = `${(Math.random() - 0.5) * 200}px`;
+        const y = `${(Math.random() - 0.5) * 200}px`;
+        particle.style.setProperty('--x', x);
+        particle.style.setProperty('--y', y);
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        container.appendChild(particle);
+      }
+    }
+
+    function createEmojis(containerClass, emojis, count) {
+      const container = document.querySelector(containerClass);
+      for (let i = 0; i < count; i++) {
+        const emoji = document.createElement('div');
+        emoji.classList.add('emoji');
+        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        emoji.style.left = `${Math.random() * 100}%`;
+        emoji.style.top = `${Math.random() * 100}%`;
+        container.appendChild(emoji);
+      }
+    }
+
+    function updateCountdown() {
+      const countdownElement = document.getElementById('countdown');
+      const birthday = new Date('December 31, 2023 00:00:00').getTime();
+      const now = new Date().getTime();
+      const distance = birthday - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdownElement.textContent = `🎂 ${days}d ${hours}h ${minutes}m ${seconds}s 🎂`;
+
+      if (distance < 0) {
+        clearInterval(countdownInterval);
+        countdownElement.textContent = "🎉 Happy Birthday! 🎉";
+      }
+    }
+
+    createParticles('.sparkles', 'sparkle', 100);
+    createParticles('.firecrackers', 'firecracker', 100);
+    createParticles('.balloons', 'balloon', 50);
+    createParticles('.stars', 'star', 50);
+    createEmojis('.emojis', ['🎉', '🎂', '🎁', '🎊'], 50);
+
+    const countdownInterval = setInterval(updateCountdown, 1000);
+  </script>
 </body>
 </html>
